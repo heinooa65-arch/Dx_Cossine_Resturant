@@ -1,0 +1,24 @@
+<?php
+require_once __DIR__ . '/includes/functions.php'; $user=require_role(['customer']); $pageTitle='Checkout'; $error='';
+if ($_SERVER['REQUEST_METHOD']==='POST') {
+    csrf_check(); $address=trim($_POST['address'] ?? ''); $note=trim($_POST['note'] ?? ''); $cart=json_decode((string)($_POST['cart'] ?? '[]'),true);
+    if (!$address || !is_array($cart) || !$cart) $error='Add at least one item and a delivery address.';
+    else {
+        $qtyById=[]; foreach($cart as $line){$id=(int)($line['id']??0);$qty=(int)($line['quantity']??0);if($id>0&&$qty>0)$qtyById[$id]=min(20,($qtyById[$id]??0)+$qty);}
+        if (!$qtyById) $error='Your bag is empty.';
+        else try {
+            $pdo=db();$pdo->beginTransaction();$ids=array_keys($qtyById);$marks=implode(',',array_fill(0,count($ids),'?'));
+            $stmt=$pdo->prepare("SELECT id,name,price,is_available FROM menu_items WHERE id IN ($marks) FOR UPDATE");$stmt->execute($ids);$items=$stmt->fetchAll();
+            if(count($items)!==count($ids)) throw new RuntimeException('An item in your bag no longer exists.');
+            $subtotal=0; foreach($items as $item){if(!(int)$item['is_available']) throw new RuntimeException($item['name'].' is currently unavailable.');$subtotal+=(float)$item['price']*$qtyById[(int)$item['id']];}
+            $fee=(float)setting('delivery_fee','1500');$total=$subtotal+$fee;$number='OE-'.date('ymd').'-'.strtoupper(bin2hex(random_bytes(3)));
+            $insert=$pdo->prepare("INSERT INTO orders (user_id,order_number,status,subtotal,delivery_fee,total,delivery_address,customer_note) VALUES (?,?, 'New',?,?,?,?,?)");$insert->execute([$user['id'],$number,$subtotal,$fee,$total,$address,$note]);$orderId=(int)$pdo->lastInsertId();
+            $lineInsert=$pdo->prepare('INSERT INTO order_items (order_id,menu_item_id,item_name,quantity,price_at_order,line_total) VALUES (?,?,?,?,?,?)');
+            foreach($items as $item){$qty=$qtyById[(int)$item['id']];$price=(float)$item['price'];$lineInsert->execute([$orderId,$item['id'],$item['name'],$qty,$price,$price*$qty]);}
+            $pdo->prepare('UPDATE users SET address=? WHERE id=?')->execute([$address,$user['id']]);$pdo->commit();notify_user((int)$user['id'],'Order received','We’ve received order '.$number.'.',$orderId);redirect('track.php?id='.$orderId);
+        } catch(Throwable $e){if(isset($pdo)&&$pdo->inTransaction())$pdo->rollBack();$error=$e instanceof RuntimeException?$e->getMessage():'Your order could not be saved. Please try again.';}
+    }
+}
+$pageTitle='Checkout'; require __DIR__ . '/includes/header.php'; ?>
+<section class="page-shell checkout-page"><div class="page-heading"><span class="eyebrow">THE LAST LITTLE STEP</span><h1>Let's get it <em>to you.</em></h1><p>Our kitchen will start as soon as your order comes through.</p></div><div class="checkout-layout"><div class="content-card"><span class="eyebrow">DELIVERY DETAILS</span><h2>Where should we bring it?</h2><?php if($error): ?><div class="notice error"><?= e($error) ?></div><?php endif; ?><form method="post" class="form-stack" id="checkout-form"><input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>"><input type="hidden" name="cart" id="checkout-cart"><label>Delivery address<textarea name="address" rows="4" required placeholder="Building, street, township…"><?= e($_POST['address'] ?? $user['address'] ?? '') ?></textarea></label><label>Note for our kitchen or rider <small>(optional)</small><textarea name="note" rows="2" maxlength="500" placeholder="Gate code, spice preference…"><?= e($_POST['note'] ?? '') ?></textarea></label><button class="button button-dark button-wide">Place order <span>↗</span></button><small class="muted">Pay cash on delivery. Your total is recalculated securely by the server.</small></form></div><aside class="content-card cart-summary"><span class="eyebrow">YOUR ORDER</span><div id="checkout-preview" class="checkout-preview"></div><div class="summary-total"><span>Delivery</span><b><?= money((float)setting('delivery_fee','1500')) ?></b></div><p class="muted">The server checks current menu availability and prices when you place your order.</p></aside></div></section><script>document.addEventListener('DOMContentLoaded',()=>{const cart=JSON.parse(localStorage.getItem('oliveCart')||'[]');document.querySelector('#checkout-cart').value=JSON.stringify(cart);const area=document.querySelector('#checkout-preview');if(!cart.length){area.innerHTML='<p>Your bag is empty. <a href="index.html#menu">Browse the menu</a></p>';document.querySelector('#checkout-form button').disabled=true;}else area.innerHTML=cart.map(i=>`<div class="summary-line"><span>${String(i.name).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))} × ${Number(i.quantity)||1}</span><b>${((Number(i.price)||0)*(Number(i.quantity)||1)).toLocaleString()} MMK</b></div>`).join('');});</script>
+<?php require __DIR__ . '/includes/footer.php'; ?>

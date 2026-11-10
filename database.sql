@@ -1,0 +1,124 @@
+CREATE DATABASE IF NOT EXISTS restaurant_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE restaurant_db;
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
+  email VARCHAR(190) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  role ENUM('admin','staff','customer') NOT NULL DEFAULT 'customer',
+  phone VARCHAR(40) DEFAULT NULL,
+  address TEXT DEFAULT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS categories (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE,
+  description VARCHAR(255) DEFAULT NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  is_active TINYINT(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS menu_items (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  category_id INT UNSIGNED NOT NULL,
+  name VARCHAR(150) NOT NULL,
+  description TEXT DEFAULT NULL,
+  price DECIMAL(10,2) NOT NULL,
+  photo_url VARCHAR(500) DEFAULT NULL,
+  is_available TINYINT(1) NOT NULL DEFAULT 1,
+  mealdb_id VARCHAR(30) DEFAULT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_menu_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT,
+  UNIQUE KEY uq_mealdb_id (mealdb_id),
+  INDEX idx_menu_available (is_available, category_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS restaurant_tables (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  table_number VARCHAR(20) NOT NULL UNIQUE,
+  seats TINYINT UNSIGNED NOT NULL,
+  is_active TINYINT(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS reservations (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id INT UNSIGNED NOT NULL,
+  table_id INT UNSIGNED DEFAULT NULL,
+  guest_name VARCHAR(120) NOT NULL,
+  guest_email VARCHAR(190) NOT NULL,
+  guest_phone VARCHAR(40) NOT NULL,
+  reservation_date DATE NOT NULL,
+  reservation_time TIME NOT NULL,
+  guests TINYINT UNSIGNED NOT NULL,
+  status ENUM('Pending','Approved','Rejected') NOT NULL DEFAULT 'Pending',
+  note VARCHAR(500) DEFAULT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_res_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_res_table FOREIGN KEY (table_id) REFERENCES restaurant_tables(id) ON DELETE SET NULL,
+  INDEX idx_res_slot (reservation_date, reservation_time, status)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS orders (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id INT UNSIGNED NOT NULL,
+  order_number VARCHAR(24) NOT NULL UNIQUE,
+  status ENUM('New','Preparing','Ready','Delivered') NOT NULL DEFAULT 'New',
+  subtotal DECIMAL(10,2) NOT NULL,
+  delivery_fee DECIMAL(10,2) NOT NULL DEFAULT 0,
+  total DECIMAL(10,2) NOT NULL,
+  delivery_address TEXT NOT NULL,
+  customer_note VARCHAR(500) DEFAULT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_order_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT,
+  INDEX idx_order_status (status, created_at),
+  INDEX idx_order_user (user_id, created_at)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS order_items (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  order_id INT UNSIGNED NOT NULL,
+  menu_item_id INT UNSIGNED DEFAULT NULL,
+  item_name VARCHAR(150) NOT NULL,
+  quantity SMALLINT UNSIGNED NOT NULL,
+  price_at_order DECIMAL(10,2) NOT NULL,
+  line_total DECIMAL(10,2) NOT NULL,
+  CONSTRAINT fk_item_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+  CONSTRAINT fk_item_menu FOREIGN KEY (menu_item_id) REFERENCES menu_items(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS settings (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  setting_key VARCHAR(100) NOT NULL UNIQUE,
+  setting_value TEXT NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS app_sessions (
+  session_id VARCHAR(128) NOT NULL PRIMARY KEY,
+  session_data MEDIUMBLOB NOT NULL,
+  expires_at BIGINT UNSIGNED NOT NULL,
+  INDEX idx_app_session_expiry (expires_at)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS notifications (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id INT UNSIGNED NOT NULL,
+  order_id INT UNSIGNED DEFAULT NULL,
+  title VARCHAR(160) NOT NULL,
+  message VARCHAR(500) NOT NULL,
+  is_read TINYINT(1) NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_notif_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_notif_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+  INDEX idx_notif_user (user_id, is_read, created_at)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS coupons (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  code VARCHAR(40) NOT NULL UNIQUE,
+  discount_percent TINYINT UNSIGNED NOT NULL,
+  expires_at DATE NOT NULL,
+  is_active TINYINT(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB;

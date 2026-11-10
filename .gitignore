@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+.vercel/
+vendor/
+node_modules/
+*.log
+*.sql.gz
+Thumbs.db
+Desktop.ini
+# Keep the separate older copy out of the main Resturant repository.
+Test/

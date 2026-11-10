@@ -1,0 +1,3 @@
+<?php
+require_once __DIR__ . '/../includes/functions.php';header('Content-Type: application/json; charset=utf-8');
+$user=current_user();if(!$user||$user['role']!=='customer'){http_response_code(401);echo json_encode(['error'=>'Sign in required']);exit;}$id=(int)($_GET['id']??0);$stmt=db()->prepare('SELECT oi.menu_item_id,oi.quantity,m.name,m.price,m.photo_url FROM order_items oi JOIN orders o ON o.id=oi.order_id JOIN menu_items m ON m.id=oi.menu_item_id WHERE o.id=? AND o.user_id=? AND m.is_available=1');$stmt->execute([$id,$user['id']]);$rows=$stmt->fetchAll();$items=[];foreach($rows as $r)$items[]=['id'=>(int)$r['menu_item_id'],'name'=>$r['name'],'price'=>(float)$r['price'],'image'=>$r['photo_url'],'quantity'=>(int)$r['quantity']];echo json_encode(['items'=>$items]);

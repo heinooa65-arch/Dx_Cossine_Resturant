@@ -1,0 +1,7 @@
+.git/
+.vercel/
+.env
+.env.*
+Test/
+*.log
+*.sql.gz

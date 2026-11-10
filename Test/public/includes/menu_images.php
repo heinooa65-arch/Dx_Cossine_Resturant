@@ -1,0 +1,172 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * One curated Wikimedia Commons photograph for each seeded menu item.
+ * The Commons file page is the canonical source for creator and license details.
+ */
+function menu_image_catalog(): array
+{
+    static $files = [
+        'Spaghetti Bolognese' => 'Tagliatelle al ragù (image modified).jpg',
+        'Spaghetti Carbonara' => 'Espaguetis carbonara.jpg',
+        'Lasagne al Forno' => 'Lasagne - stonesoup.jpg',
+        'Fettuccine Alfredo' => 'Fettuccine Alfredo originals.jpg',
+        'Penne Arrabbiata' => 'Penne Arrabbiata.jpg',
+        'Spinach & Ricotta Ravioli' => 'Ricotta ravioli.jpg',
+        'Gnocchi Pomodoro' => 'Gnocchi di ricotta burro e salvia.jpg',
+        'Basil Pesto Linguine' => 'Linguine.jpg',
+        'Margherita Pizza' => 'Margherita pizza (2346060254).jpg',
+        'Mushroom & Herb Pizza' => 'Pizza with mushroom.jpg',
+        'Four Cheese Pizza' => 'Four cheese pizza.jpg',
+        'Chicken Parmigiana' => 'Chicken parm at a diner.jpg',
+        'Chicken Schnitzel' => 'Chicken schnitzel and mashed potatoes.jpg',
+        'Wiener-Style Schnitzel' => 'Breitenlesau Krug Bräu Schnitzel.JPG',
+        'Fish & Chips' => 'Fish and chips blackpool.jpg',
+        'Beef Bourguignon' => 'Beef bourguignon NYT.jpg',
+        'Coq au Vin' => 'Gourmet coq au vin.jpg',
+        'Shepherd’s Pie' => 'Homerton College - Shepherd\'s pie (cropped).jpg',
+        'Cottage Pie' => 'Australian cottage pie (cropped).jpg',
+        'Swedish Meatballs' => 'Swedish meatballs.jpg',
+        'Beef Stroganoff' => 'Beef Stroganoff-03.jpg',
+        'Ratatouille' => 'Ratatouille home cooked.jpg',
+        'Greek Moussaka' => 'MussakasMeMelitsanesKePatates01.JPG',
+        'Chicken Souvlaki Plate' => 'Chicken souvlaki pita with french fries.jpg',
+        'Spanish Chicken Paella' => 'Chicken Paella.JPG',
+        'Vegetable Paella' => 'Binhui - paella vegetariana.jpg',
+        'Tortilla Española' => 'Tortilla de patata - San Sebastián.jpg',
+        'Quiche Lorraine' => 'Quiche de Lorraine.jpg',
+        'Croque Monsieur' => 'Croque monsieur.jpg',
+        'French Onion Soup' => 'Soupe à l\'oignon.jpg',
+        'Chicken Caesar Salad' => 'DSC 7112 A plate of grilled chicken Caesar salad on a table set for dinner with glasses of red wine and soft candlelight in the background.jpg',
+        'Greek Village Salad' => 'Greece Food Horiatiki.JPG',
+        'Steak Frites' => 'Steak frites - San Francisco, CA.jpg',
+        'Roast Chicken & Potatoes' => 'Roasted Chicken with Potato.jpg',
+        'Salmon with Dill Cream' => 'Baked salmon with dill and lemon.jpg',
+        'Hungarian Beef Goulash' => 'Goulash hungarian.jpg',
+        'Chicken Cordon Bleu' => 'Cordon-bleu-2.jpg',
+        'Wild Mushroom Risotto' => 'Wild Mushroom Risotto Borough Market 2024-01-11.jpg',
+        'Seafood Linguine' => 'Seafood linguine.jpg',
+        'Baked Macaroni & Cheese' => 'Baked macaroni and cheese close-up.jpg',
+        'Beef Wellington Slice' => 'Beef Wellington 2019.jpg',
+        'Bratwurst & Sauerkraut' => 'German Bratwürste.jpg',
+        'Chicken Pot Pie' => 'Chicken Pot Pie, cut open.jpg',
+        'Sicilian Caponata Toast' => 'Sicilian caponata.jpg',
+        'Lemon Butter White Fish' => 'Fish with lemon.jpg',
+        'Pork Milanese' => 'Cotoletta di maiale e patatine.jpg',
+        'Spinach & Feta Crêpe' => 'Crepes dsc07085.jpg',
+        'Potato Gratin' => 'Gratin-Dauphinois.jpg',
+        'Mohinga' => 'Myanmar’s Traditional Food - Mohinga.jpg',
+        'Ohn No Khao Swe' => 'Ohn No Khao Swè.jpg',
+        'Shan Noodles with Tofu' => 'Shan Tofu Noodles in Mandalay.jpg',
+        'Shan Noodles with Chicken' => 'Shan Noodles Soup Version.jpg',
+        'Nan Gyi Thoke' => 'Nan gyi thoke.png',
+        'Rakhine Mont Di' => 'Rakhinemontdi.JPG',
+        'Mandalay Mee Shay' => 'Mandalaymeeshay.JPG',
+        'Kyay Oh Soup' => 'Kyay Oh from YKKO.jpg',
+        'Chicken Danbauk' => 'BurmeseBiryani.jpg',
+        'Lahpet Thoke' => 'Laphet thoke.JPG',
+        'Gyin Thoke' => 'Myanmar Traditional Salad.jpg',
+        'Tofu Thoke' => 'Tophu thoke.JPG',
+        'Shan Tofu Noodle Salad' => 'Shan, Dai, traditional Tofu noodle.jpg',
+        'Htamin Jin' => 'Burmese rice salad.jpg',
+        'Nga Htamin' => 'NgarHtaMin.jpg',
+        'Burmese Chicken Curry' => 'Male, Myanmar curry.jpg',
+        'Burmese Pork Curry' => 'Wet tha hin htote.JPG',
+        'Burmese Beef Curry' => 'BEEF CURRY.jpg',
+        'Burmese Fish Curry' => 'Rohu fish curry.jpg',
+        'Tamarind Prawn Curry' => 'Prawn curry.png',
+        'Burmese Egg Curry' => 'Egg curry.jpg',
+        'Chicken & Potato Curry' => 'Chicken Potato Curry - Howrah 2013-06-07 8866.JPG',
+        'Burmese Pumpkin Curry' => 'Pumpkin Curry Rice - Pompoko.jpg',
+        'Sour Bamboo Shoot Curry' => 'Mixed vegetable curry 2.jpg',
+        'Chickpea & Potato Curry' => 'Chickpea curry.jpg',
+        'Sour Fish Curry' => 'Kason Pora Fish Curry (22237117385).jpg',
+        'Chicken Fried Rice' => 'Chicken Fried Rice.JPG',
+        'Vegetable Fried Rice' => 'Vegetable fried rice.jpg',
+        'Coconut Noodle Soup' => 'Khow suey.jpg',
+        'Laphet Rice Bowl' => 'Mandalay, Salad plate, Myanmar.jpg',
+        'Burmese Vermicelli Salad' => 'Khauk swe thoke.jpg',
+        'Samosa Thoke' => 'Burmese style samusa.jpg',
+        'Rice & Curry Lunch Set' => 'Myanma cuisine.jpg',
+        'Shan Rice Plate' => 'Shan Htamin.jpg',
+        'Burmese Noodle Salad' => 'Mogok Meeshay.jpg',
+        'Shan Grilled Chicken' => 'Grilled chicken with salad and coriander chatni.jpg',
+        'Turmeric Grilled Fish' => 'Fish and dill for 2 - close-up - Cha Ca La Vong VND120000 each.jpg',
+        'Burmese Chicken Skewers' => 'Chicken skewers with barbecue sauce served with almonds and herbs.jpg',
+        'Burmese Coconut Rice' => 'Burmese Oiled Glutinous Rice.jpg',
+        'Vegetable Curry Set' => 'Mixed vegetable curry 1.jpg',
+        'A Kyaw Fritter Plate' => 'Myanmar Fried Snack.jpg',
+        'Pe Kyaw' => 'Fried Mung Bean.jpg',
+        'Bayar Kyaw' => 'Mandalay Fried Bean.jpg',
+        'Buthi Kyaw' => 'A Nyar Thar Kyaw Kon (Slu) snack from Myanmar.JPG',
+        'Palata with Pea Dip' => 'Palatha, Myanmar.jpg',
+        'Stuffed Burmese Paratha' => 'Myanmar Naan with Beans.jpg',
+        'Htamin Paung' => 'Paung din meal.jpg',
+        'Burmese Tamarind Fish Curry' => 'Fish curry cooked with pot tamarind.jpg',
+        'Garlic Chilli Prawns' => 'Homemade prawn curry.jpg',
+        'Spicy Burmese Chicken Stir-Fry' => 'Garlic chicken stir-fry with rice.jpg',
+        'Mont Lin Ma Yar' => 'ဆန်မုန့်လင်မယား.jpg',
+        'Classic Tiramisu' => 'Tiramisu - Raffaele Diomede.jpg',
+        'Vanilla Panna Cotta' => 'Panna Cotta with cream and garnish.jpg',
+        'Crème Brûlée' => '2014 0531 Crème brûlée Doi Mae Salong (cropped).jpg',
+        'Apple Strudel' => 'Apfelstrudel02.jpg',
+        'Belgian Waffle' => 'Belgian waffle with fruitsalad and cream.jpg',
+        'New York Cheesecake' => 'New York Cheesecake.jpg',
+        'Chocolate Lava Cake' => 'Chocolate lava cake.jpg',
+        'French Apple Tart' => 'French Apple Tart .jpg',
+        'Cinnamon Roll' => 'Cinnamon roll in Stockholm.jpg',
+        'Lemon Tart' => 'Lemon tart - star5112.jpg',
+        'Berry Pavlova' => 'Pavlova dessert.JPG',
+        'Chocolate Profiteroles' => 'Profiteroles with chocolate and caramel sauce, February 2007.jpg',
+        'Vanilla Bean Gelato' => 'Delicious Gelato on display.jpg',
+        'Mont Lone Yay Paw' => 'MontLone yeibaw.JPG',
+        'Shwe Yin Aye' => 'Shweyin-aye.JPG',
+        'Mont Let Saung' => 'Mont Kywe Thae.jpg',
+        'Kyauk Kyaw Coconut Jelly' => 'Coconut Sago Pudding(အုန်းနို့သာကူပြင်).png',
+        'Bein Mont' => 'Mont Pyar Thalet.jpg',
+        'Burmese Semolina Cake' => 'Sanwin makin.jpg',
+        'Coconut Jaggery Pancakes' => 'Dein gyin.JPG',
+        'Burmese Milk Tea' => 'လက်ဖက်ရည် TeaPlus.jpg',
+        'Laphet Yay (Myanmar Tea)' => 'Tea of Burma1.jpg',
+        'Fresh Lime Soda' => 'Glass sparkling lemonade.jpg',
+        'Honey Lime Cooler' => 'G lemon Lime 1.jpg',
+        'Tamarind Cooler' => 'Tamarind drink.jpg',
+        'Fresh Coconut Water' => 'Young Coconut Drink.jpg',
+        'Fresh Sugarcane Juice' => 'Sugarcanejuice.jpg',
+        'Roselle Iced Tea' => 'Hibiscus tea and iced water.jpg',
+        'Mango Lassi' => 'Mango lassi.jpg',
+        'Avocado Smoothie' => 'Avocado lamaw (Avocado in milk and sugar, chilled or with ice), Philippines 04.jpg',
+        'Mango Smoothie' => 'Fresh-mango-smoothie 02.jpg',
+        'Papaya Lime Shake' => 'Batido de papaya.jpg',
+        'Passion Fruit Soda' => 'Brisa passion fruit fizzy drink and sweets.jpg',
+        'Iced Lemon Tea' => 'Iced Lemon tea with mint leaves in bakery and coffee house.jpg',
+        'Myanmar-Style Coffee' => 'Latte and dark coffee.jpg',
+        'Iced Americano' => 'Iced americano.jpg',
+        'Cappuccino' => 'Cappuccino in original.jpg',
+        'English Breakfast Tea' => 'Mug of English Breakfast Tea.jpg',
+        'Hot Chocolate' => 'Hot chocolate drink.jpg',
+        'Sparkling Water' => 'Sparkling Water with Mint in Glass Cup.jpg',
+    ];
+    return $files;
+}
+
+function catalog_photo(string $itemName): string
+{
+    $file = menu_image_catalog()[$itemName] ?? null;
+    if ($file === null) {
+        return '';
+    }
+
+    return 'https://commons.wikimedia.org/wiki/Special:FilePath/' . rawurlencode($file) . '?width=900';
+}
+
+function catalog_photo_source(string $itemName): string
+{
+    $file = menu_image_catalog()[$itemName] ?? null;
+    if ($file === null) {
+        return '';
+    }
+
+    return 'https://commons.wikimedia.org/wiki/File:' . rawurlencode(str_replace(' ', '_', $file));
+}
